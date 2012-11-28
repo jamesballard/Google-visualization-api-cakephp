@@ -22,6 +22,11 @@ class GChartHelper extends AppHelper {
 			'data_method' => 'setValue',
 			'package' => 'corechart'
 		),
+        'column' => array(
+            'method' => 'ColumnChart',
+            'data_method' => 'setValue',
+            'package' => 'corechart'
+        ),
 		'pie' => array(
 			'method' => 'PieChart',
 			'data_method' => 'setValue',
@@ -81,6 +86,11 @@ class GChartHelper extends AppHelper {
 	 * @return string
 	 */
 	public function visualize($name, $data=array()) {
+        if(isset($data['isStacked'])) {
+            $stacked = ", isStacked: true";
+        }else{
+            $stacked = '';
+        }
 		$data = array_merge($this->defaults, $data);
 
 		$o = $this->loadPackage($data['type']);
@@ -90,7 +100,9 @@ class GChartHelper extends AppHelper {
 		';
 		$o.= $this->loadDataAndLabels($data, $data['type']);
 		$o.= $this->instantiateGraph($name, $data['type']);
-		$o.= "chart.draw(data, {width: {$data['width']}, height: {$data['height']}, is3D: {$data['is3D']}, legend: '{$data['legend']}', title: '{$data['title']}'});";
+		$o.= "chart.draw(data, {width: {$data['width']}, height: {$data['height']}, is3D: {$data['is3D']}, legend: '{$data['legend']}', title: '{$data['title']}'";
+		$o.= $stacked;
+        $o.= "});";
 		$o.= "}";
 		$o.= "google.setOnLoadCallback(drawChart$name);";
 		$o.= "</script>";
